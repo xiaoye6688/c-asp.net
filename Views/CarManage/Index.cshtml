@@ -1,0 +1,133 @@
+﻿@model List<CarManageMVCEFDemo.Models.CarRecord>
+@{
+    ViewBag.Title = "Index";
+}
+
+<script type="text/javascript">
+    //添加
+    function tianjia() {
+        location.href = "InserCar";
+    }
+    //删除
+    function shanchu(id) {
+        if (confirm("您确定要删除吗？")) {
+            $.ajax({
+                url: 'Dele',
+                type: 'post',
+                data: { "id": id },
+                dataType: 'json',
+                success: function (msg) {
+                    if (msg > 0) {
+                        location.href = "Index";
+                        alert("删除成功！");
+                    }
+                    else {
+                        alert("删除失败！");
+                    }
+                }
+            });
+        }
+    }
+    //授权
+    function shouquan(id) {
+        if (confirm("您确定要授权吗？")) {
+            $.ajax({
+                url: 'ShouQuan',
+                type: 'post',
+                data: { "id": id },
+                dataType: 'json',
+                success: function (msg) {
+                    if (msg > 0) {
+                        location.href = "Index";
+                        alert("授权成功！");
+                    }
+                    else {
+                        alert("授权失败！");
+                    }
+                }
+            });
+        }
+    }
+</script>
+
+<form method="post" action="Index">
+    <div class="panel">
+        <div class="page-header" style="background-color: lightblue;height:100px;line-height:100px;">
+            <span style="font-size:30px;margin-left:20px;">车辆出入记录列表</span>
+            <div style="float:right;margin-right:20px;">
+                <input id="Button1" type="button" value="添加" class="btn btn-info" onclick="tianjia()"  />
+            </div>
+        </div>
+        <div class="panel-body">
+            <div>
+                <table>
+                    <tr>
+                        <td>
+                            <input id="Text1" type="text" name="CarNo" placeholder="车牌号" class="form-control" />
+                        </td>
+                        <td>
+                            <input id="Text1" type="text" name="Tell" placeholder="电话" class="form-control" />
+                        </td>
+                        <td>
+                            <input id="Button1" type="submit" value="查询" class="btn btn-info" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>车辆编号</th>
+                            <th>车主姓名</th>
+                            <th>出入小区</th>
+                            <th>车辆名称</th>
+                            <th>车牌号</th>
+                            <th>车型</th>
+                            <th>车主联系电话</th>
+                            <th>驶入/驶出时间</th>
+                            <th>进出状态</th>
+                            <th>停车类型</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            if (Model.Count == 0)
+                            {
+                                <tr>
+                                    <th colspan="11" class="text-center">暂无数据！</th>
+                                </tr>
+                            }
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.CarId</td>
+                                    <td>@item.Name</td>
+                                    <td>@item.CommunityInfo.CommunityName</td>
+                                    <td>@item.CarName</td>
+                                    <td>@item.CarNo</td>
+                                    <td>@item.CarType</td>
+                                    <td>@item.Mobile</td>
+                                    <td>@item.DriveTime</td>
+                                    <td>@(item.State==1?"驶入":"驶出")</td>
+                                    <td>@(item.Type==1?"已授权":"临时停车")</td>
+                                    <td>
+                                        <input id="Button1" type="button" value="删除" class="btn btn-danger" onclick="shanchu(@item.CarId)" />
+                                        @{
+                                            if (item.Type == 2)
+                                            {
+                                                <input id="Button1" type="button" value="授权" class="btn btn-warning" onclick="shouquan(@item.CarId)" />
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>
+
